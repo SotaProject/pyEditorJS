@@ -347,11 +347,10 @@ class EmbedBlock(EditorJsBlock):
                        '</blockquote> '
                        '<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
             'youtube': '<iframe '
-                       'style="width:100%;" '
                        'allowfullscreen="" '
                        f'src="{self.embed_url}" '
                        f'class="embed-tool__content embed-tool--{self.service}__content" '
-                       'width="100%" '
+                       f'width="{self.width}"'
                        f'height="{self.height}" '
                        'frameborder="0"></iframe>'
         }
