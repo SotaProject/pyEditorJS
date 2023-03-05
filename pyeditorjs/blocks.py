@@ -1,4 +1,5 @@
 import typing as t
+import html
 
 try:
     import bleach  # type: ignore
@@ -27,17 +28,22 @@ __all__ = [
     "ListBlock",
     "DelimiterBlock",
     "ImageBlock",
+    "EmbedBlock",
     "CodeBlock",
     "QuoteBlock",
 ]
 
 
-def _sanitize(html: str) -> str:
+def _sanitize(html_string: str) -> str:
     return bleach.clean(
-        html,
+        html_string,
         tags=["b", "i", "u", "a", "mark", "code", "s", "del"],
         attributes=["class", "data-placeholder", "href"],
     )
+
+
+def _escape(html_string: str) -> str:
+    return html.escape(html_string, quote=True)
 
 
 @dataclass
@@ -278,6 +284,87 @@ class ImageBlock(EditorJsBlock):
             rf'     <img class="image-tool__image-picture" src="{_img}"/>',
             r"  </div>"
             rf'<figcaption class="image-tool__caption" data-placeholder="{_sanitize(caption) if sanitize else caption}">{_sanitize(caption) if sanitize else caption}</figcaption>'
+            rf"</figure>"
+            r"</div>",
+        ]
+
+        return "".join(parts)
+
+
+class EmbedBlock(EditorJsBlock):
+    @property
+    def source(self) -> t.Optional[str]:
+        """
+        Source of the embed.
+        """
+
+        return self.data.get("source", None)
+
+    @property
+    def width(self) -> t.Optional[str]:
+        """
+        Width of the embed.
+        """
+
+        return self.data.get("width", None)
+
+    @property
+    def height(self) -> t.Optional[str]:
+        """
+        Width of the embed.
+        """
+
+        return self.data.get("height", None)
+
+    @property
+    def embed_url(self) -> t.Optional[str]:
+        """
+        Embed url of the embed.
+        """
+
+        return self.data.get("embed", None)
+
+    @property
+    def service(self) -> t.Optional[str]:
+        """
+        Service of the embed.
+        """
+
+        return self.data.get("service", None)
+
+    @property
+    def caption(self) -> t.Optional[str]:
+        """
+        The Embed's caption.
+        """
+
+        return self.data.get("caption", None)
+
+    def html(self, sanitize: bool = False) -> str:
+        services_htmls = {
+            'twitter': '<blockquote class="twitter-tweet" align="center">'
+                       f'<a href="{self.source}"></a>'
+                       '</blockquote> '
+                       '<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
+            'youtube': '<iframe '
+                       'allowfullscreen="" '
+                       f'src="{self.embed_url}" '
+                       f'class="embed-tool__content embed-tool--{self.service}__content" '
+                       f'width="{self.width}"'
+                       f'height="{self.height}" '
+                       'frameborder="0"></iframe>'
+        }
+
+        caption = self.caption
+
+        parts = [
+            rf'<div class="cdx-block embed-tool embed-tool-{self.service}">'
+            rf"<figure>"
+            rf'  <div class="embed-tool__embed embed-tool--{self.service}__embed">',
+            rf'      {services_htmls[self.service]}',
+            r"  </div>"
+            rf'<figcaption class="embed-tool__caption embed-tool--{self.service}__caption" '
+            rf'data-placeholder="{_escape(caption)}">{_sanitize(caption) if sanitize else caption}</figcaption>'
             rf"</figure>"
             r"</div>",
         ]
