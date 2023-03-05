@@ -36,6 +36,7 @@ class EditorJsParser:
             "image": ImageBlock,
             "code": CodeBlock,
             "quote": QuoteBlock,
+            "embed": EmbedBlock
         }
 
         _type = data.get("type", None)
