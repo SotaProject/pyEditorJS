@@ -168,11 +168,12 @@ class QuoteBlock(EditorJsBlock):
         """
         The caption of the quote.
         """
-
         return self.data.get("caption", None)
 
     def html(self, sanitize: bool = False) -> str:
-        caption = self.caption.replace("<br>", "")
+        caption = _sanitize(self.caption) if sanitize else self.caption
+        if caption.endswith('<br>'):
+            caption = caption[:-4]
 
         figcaption = (
             rf'<figcaption class="ce-quote__caption">{_sanitize(caption) if sanitize else caption}</figcaption>'
@@ -269,6 +270,10 @@ class EmbedBlock(EditorJsBlock):
         return self.data.get("caption", None)
 
     def html(self, sanitize: bool = False) -> str:
+        caption = _sanitize(self.caption) if sanitize else self.caption
+        if caption.endswith('<br>'):
+            caption = caption[:-4]
+
         parts = [
             rf'<div class="cdx-block embed-tool embed-tool-{self.service}">'
             rf'<figure>'
@@ -277,7 +282,10 @@ class EmbedBlock(EditorJsBlock):
 
         if self.service == "youtube":
             parts += [
-                f'<iframe src="{self.embed}" width="100%" style="aspect-ratio: 16/9"></iframe>'
+                f'<iframe src="{self.embed}" width="100%" style="aspect-ratio: 16/9" '
+                f'frameborder="0" allow="accelerometer; autoplay; '
+                f'clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" '
+                f'allowfullscreen></iframe>'
             ]
         elif self.service == "twitter":
             parts += [
@@ -286,7 +294,7 @@ class EmbedBlock(EditorJsBlock):
                 f'<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
             ]
         parts += [f'</div>'
-                  f'<figcaption class="embed-tool__caption">{_sanitize(self.caption)}</figcaption>'
+                  f'<figcaption class="embed-tool__caption">{caption}</figcaption>'
                   '</figure>'
                   '</div>']
 
@@ -345,7 +353,9 @@ class MediaBlock(EditorJsBlock):
     def html(self, sanitize: bool = False) -> str:
         _url = self.file_url
 
-        caption = _sanitize(self.caption)
+        caption = _sanitize(self.caption) if sanitize else self.caption
+        if caption.endswith('<br>'):
+            caption = caption[:-4]
 
         parts = [
             rf'<div class="cdx-block media-tool media-tool--filled {"media-tool--stretched" if self.stretched else ""} {"media-tool--withBorder" if self.with_border else ""} {"media-tool--withBackground" if self.with_background else ""}">'
