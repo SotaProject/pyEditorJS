@@ -175,18 +175,19 @@ class QuoteBlock(EditorJsBlock):
         if caption.endswith('<br>'):
             caption = caption[:-4]
 
-        figcaption = (
-            rf'<figcaption class="ce-quote__caption">{_sanitize(caption) if sanitize else caption}</figcaption>'
+        cite = (
+            rf'<cite class="ce-quote__caption">{_sanitize(caption) if sanitize else caption}</cite>'
             if caption
             else ""
         )
 
         parts = [
             rf'<div class="cdx-block ce-quote ce-quote-with-align-{self.alignment}{" ce-quote-with-caption" if self.caption else ""}">'
-            r" <figure>"
             r'      <blockquote class="ce-quote__blockquote">',
             rf"{_sanitize(self.text) if sanitize else self.text}",
-            r"      </blockquote>" rf"{figcaption}" r" </figure>" r"</div>",
+            f"{cite}"
+            r"      </blockquote>" 
+            r"</div>",
         ]
 
         return "".join(parts)
