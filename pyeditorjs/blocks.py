@@ -228,7 +228,7 @@ class ListBlock(EditorJsBlock):
 
 class DelimiterBlock(EditorJsBlock):
     def html(self, sanitize: bool = False) -> str:
-        return r'<div class="cdx-block ce-delimiter">***</div>'
+        return r'<div class="cdx-block ce-delimiter"><hr/></div>'
 
 
 class RawBlock(EditorJsBlock):
