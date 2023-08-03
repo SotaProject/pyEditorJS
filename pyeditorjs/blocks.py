@@ -13,6 +13,7 @@ __all__ = [
     "ListBlock",
     "DelimiterBlock",
     "CodeBlock",
+    "WarningBlock",
     "QuoteBlock",
     "MediaBlock",
     "RawBlock",
@@ -144,6 +145,38 @@ class ParagraphBlock(EditorJsBlock):
         alignment = self.tunes.get("AlignmentTune", {"alignment": "left"})["alignment"]
 
         return rf'<p style="text-align: {alignment}" class="{" ".join(classes)}">{_sanitize(self.text) if sanitize else self.text}</p>'
+
+
+class WarningBlock(EditorJsBlock):
+    @property
+    def title(self) -> t.Optional[str]:
+        """
+        The title content of the warning.
+        """
+
+        return self.data.get("title", None)
+
+    @property
+    def message(self) -> t.Optional[str]:
+        """
+        The message of the warning.
+        """
+        return self.data.get("message", None)
+
+    def html(self, sanitize: bool = False) -> str:
+        title = self.title
+        message = self.message
+
+        parts = [
+            rf'<div class="cdx-block ce-warning">'
+            f'  <blockquote class="ce-warning__blockquote">'
+            f'    <h3 class="ce-warning__title">{title}</h3>'
+            f'    <div class="ce-warning__message">{message}</div>'
+            f'  </blockquote>'
+            r"</div>",
+        ]
+
+        return "".join(parts)
 
 
 class QuoteBlock(EditorJsBlock):

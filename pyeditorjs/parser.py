@@ -35,6 +35,7 @@ class EditorJsParser:
             "delimiter": DelimiterBlock,
             "code": CodeBlock,
             "quote": QuoteBlock,
+            "warning": WarningBlock,
             "media": MediaBlock,
             "raw": RawBlock,
             "embed": EmbedBlock
