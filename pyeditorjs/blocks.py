@@ -399,7 +399,7 @@ class MediaBlock(EditorJsBlock):
         ]
 
         if self.file_mimetype.startswith('image'):
-            srcset = f'{_url.get("normal", None)} 1080w, ' \
+            srcset = f'{_url.get("normal", None)} 1280w, ' \
                      f'{_url.get("medium", None)} 720w, ' \
                      f'{_url.get("small", None)} 480w'
 
