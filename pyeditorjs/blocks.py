@@ -413,7 +413,7 @@ class MediaBlock(EditorJsBlock):
 
         parts += [
             r"  </div>"
-            rf'<figcaption class="media-tool__caption" data-placeholder="{caption}">{caption}</figcaption>'
+            rf'<figcaption class="media-tool__caption" data-placeholder="{_clean(caption)}">{caption}</figcaption>'
             rf"</figure>"
             r"</div>",
         ]
