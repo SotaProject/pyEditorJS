@@ -171,7 +171,7 @@ class WarningBlock(EditorJsBlock):
         parts = [
             rf'<div class="cdx-block ce-warning">'
             f'  <blockquote class="ce-warning__blockquote">'
-            f'    <h3 class="ce-warning__title">{title}</h3>' if title else ''
+            f'    <b class="ce-warning__title">{title}</b>' if title else ''
             f'    <div class="ce-warning__message">{message}</div>' if message else ''
             f'  </blockquote>'
             r"</div>",
