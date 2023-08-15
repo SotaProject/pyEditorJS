@@ -16,6 +16,7 @@ __all__ = [
     "WarningBlock",
     "QuoteBlock",
     "MediaBlock",
+    "TelegramPost",
     "RawBlock",
     "EmbedBlock"
 ]
@@ -164,14 +165,14 @@ class WarningBlock(EditorJsBlock):
         return self.data.get("message", None)
 
     def html(self, sanitize: bool = False) -> str:
-        title = self.title
-        message = self.message
+        title = _sanitize(self.title) if sanitize else self.title
+        message = _sanitize(self.message) if sanitize else self.message
 
         parts = [
             rf'<div class="cdx-block ce-warning">'
             f'  <blockquote class="ce-warning__blockquote">'
-            f'    <h3 class="ce-warning__title">{title}</h3>'
-            f'    <div class="ce-warning__message">{message}</div>'
+            f'    <h3 class="ce-warning__title">{title}</h3>' if title else ''
+            f'    <div class="ce-warning__message">{message}</div>' if message else ''
             f'  </blockquote>'
             r"</div>",
         ]
@@ -416,6 +417,50 @@ class MediaBlock(EditorJsBlock):
             rf'<figcaption class="media-tool__caption" data-placeholder="{_clean(caption)}">{caption}</figcaption>'
             rf"</figure>"
             r"</div>",
+        ]
+
+        return "".join(parts)
+
+
+class TelegramPost(EditorJsBlock):
+
+    @property
+    def messageId(self) -> t.Optional[str]:
+        """
+        messageId of the post.
+        """
+
+        return self.data.get("messageId", "")
+
+    @property
+    def channelName(self) -> t.Optional[str]:
+        """
+        channelName of the embed
+        """
+
+        return self.data.get("channelName", "")
+
+    @property
+    def embed(self) -> t.Optional[str]:
+        """
+        embed source of the embed
+        """
+
+        return self.data.get("embed", "")
+
+    @property
+    def caption(self) -> t.Optional[str]:
+        """
+        The embed's caption.
+        """
+
+        return self.data.get("caption", None)
+
+    def html(self, sanitize: bool = False) -> str:
+        parts = [
+            '<div class="cdx-block telegram-post">'
+            f'<script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="{self.channelName}/{self.messageId}" data-width="100%"></script>'
+            '</div>'
         ]
 
         return "".join(parts)

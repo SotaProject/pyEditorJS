@@ -37,6 +37,7 @@ class EditorJsParser:
             "quote": QuoteBlock,
             "warning": WarningBlock,
             "media": MediaBlock,
+            "telegramPost": TelegramPost,
             "raw": RawBlock,
             "embed": EmbedBlock
         }
