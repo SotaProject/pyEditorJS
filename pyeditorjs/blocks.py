@@ -169,11 +169,11 @@ class WarningBlock(EditorJsBlock):
         message = _sanitize(self.message) if sanitize else self.message
 
         parts = [
-            rf'<div class="cdx-block ce-warning">'
-            f'  <blockquote class="ce-warning__blockquote">'
-            f'    <b class="ce-warning__title">{title}</b>' if title else ''
-            f'    <div class="ce-warning__message">{message}</div>' if message else ''
-            f'  </blockquote>'
+            rf'<div class="cdx-block ce-warning">',
+            f'  <blockquote class="ce-warning__blockquote">',
+            f'    <b class="ce-warning__title">{title}</b>' if title else '',
+            f'    <div class="ce-warning__message">{message}</div>' if message else '',
+            f'  </blockquote>',
             r"</div>",
         ]
 
@@ -219,8 +219,8 @@ class QuoteBlock(EditorJsBlock):
             rf'<div class="cdx-block ce-quote ce-quote-with-align-{self.alignment}{" ce-quote-with-caption" if self.caption else ""}">'
             r'      <blockquote class="ce-quote__blockquote">',
             rf"{_sanitize(self.text) if sanitize else self.text}",
-            f"{cite}"
-            r"      </blockquote>" 
+            f"{cite}",
+            r"      </blockquote>",
             r"</div>",
         ]
 
@@ -392,8 +392,22 @@ class MediaBlock(EditorJsBlock):
         if caption.endswith('<br>'):
             caption = caption[:-4]
 
+        classes = [
+            "cdx-block",
+            "media-tool",
+            "media-tool--filled"
+        ]
+        if self.stretched:
+            classes.append("media-tool--stretched")
+        if self.with_border:
+            classes.append("media-tool--withBorder")
+        if self.with_background:
+            classes.append("media-tool--withBackground")
+
+        classes_string = ' '.join(classes)
+
         parts = [
-            rf'<div class="cdx-block media-tool media-tool--filled {"media-tool--stretched" if self.stretched else ""} {"media-tool--withBorder" if self.with_border else ""} {"media-tool--withBackground" if self.with_background else ""}">'
+            rf'<div class="{classes_string}">'
             rf"<figure>"
             r'  <div class="media-tool__media">',
 
@@ -402,14 +416,16 @@ class MediaBlock(EditorJsBlock):
         if self.file_mimetype.startswith('image'):
             srcset = f'{_url.get("normal", None)} 1080w, ' \
                      f'{_url.get("medium", None)} 720w, ' \
-                     f'{_url.get("small", None)} 480w'
+                     f'{_url.get("small", None)} 480w' if 'image/svg' not in self.file_mimetype else []
 
             parts += [
-                rf'     <img class="media-tool__media-picture" src="{_url.get("full", None)}" srcset="{srcset}" alt="{_clean(caption)}" />',
+                f'     <img class="media-tool__media-picture" src="{_url.get("full", "")}" ',
+                f'srcset="{srcset}" ' if srcset else '',
+                f'alt="{_clean(caption)}" />',
             ]
         elif self.file_mimetype.startswith('video'):
             parts += [
-                rf'     <video class="media-tool__media-picture" src="{_url.get("full", None)}" controls=""></video>',
+                rf'     <video class="media-tool__media-picture" src="{_url.get("full", "")}" controls=""></video>',
             ]
 
         parts += [
