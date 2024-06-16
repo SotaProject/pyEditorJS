@@ -25,8 +25,8 @@ __all__ = [
 def _sanitize(html: str) -> str:
     return bleach.clean(
         html,
-        tags=["b", "i", "u", "a", "mark", "code", "s", "del", "br"],
-        attributes=["class", "data-placeholder", "href"],
+        tags=["b", "i", "u", "a", "mark", "code", "s", "del", "br", "span"],
+        attributes=["class", "data-placeholder", "href", "data-title", "data-text"],
     )
 
 
